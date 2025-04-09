@@ -3,7 +3,8 @@ package debug;
 import flixel.FlxG;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
-import openfl.system.System;
+import flixel.util.FlxStringUtil;
+import external.memory.Memory;
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -17,9 +18,14 @@ class FPSCounter extends TextField
 	public var currentFPS(default, null):Int;
 
 	/**
-		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
+		The current memory usage.
 	**/
 	public var memoryMegas(get, never):Float;
+
+		/**
+		The peak memory usage.
+	**/
+	public var maxMemoryMegas(get, never):Float;
 
 	@:noCompletion private var times:Array<Float>;
 
@@ -62,7 +68,7 @@ class FPSCounter extends TextField
 
 	public dynamic function updateText():Void { // so people can override it in hscript
 		text = 'FPS: ${currentFPS}'
-		+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		+ '\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)} / ${FlxStringUtil.formatBytes(maxMemoryMegas)}';
 
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
@@ -70,5 +76,8 @@ class FPSCounter extends TextField
 	}
 
 	inline function get_memoryMegas():Float
-		return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
+		return Memory.getCurrentUsage();
+
+	inline function get_maxMemoryMegas():Float
+		return Memory.getPeakUsage();
 }
