@@ -1,14 +1,17 @@
 package backend;
 
 #if DISCORD_ALLOWED
-import Sys.sleep;
 import sys.thread.Thread;
 import lime.app.Application;
-
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
-
 import flixel.util.FlxStringUtil;
+
+import cpp.ConstCharStar;
+import cpp.RawConstPointer;
+
+using cpp.RawPointer;
+using cpp.Function;
 
 class DiscordClient
 {
@@ -21,17 +24,21 @@ class DiscordClient
 
 	public static function check()
 	{
-		if(ClientPrefs.data.discordRPC) initialize();
-		else if(isInitialized) shutdown();
+		if (ClientPrefs.data.discordRPC)
+			initialize();
+		else if (isInitialized)
+			shutdown();
 	}
-	
+
 	public static function prepare()
 	{
 		if (!isInitialized && ClientPrefs.data.discordRPC)
 			initialize();
 
-		Application.current.window.onClose.add(function() {
-			if(isInitialized) shutdown();
+		Application.current.window.onClose.add(function()
+		{
+			if (isInitialized)
+				shutdown();
 		});
 	}
 
@@ -40,41 +47,42 @@ class DiscordClient
 		isInitialized = false;
 		Discord.Shutdown();
 	}
-	
-	private static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void
+
+	private static function onReady(request:RawConstPointer<DiscordUser>):Void
 	{
-		final user = cast (request[0].username, String);
-		final discriminator = cast (request[0].discriminator, String);
+		final user = cast(request[0].username, String);
+		final discriminator = cast(request[0].discriminator, String);
 
 		var message = '(Discord) Connected to User ';
-		if (discriminator != '0') //Old discriminators
+		if (discriminator != '0') // Old discriminators
 			message += '($user#$discriminator)';
-		else //New Discord IDs/Discriminator system
+		else // New Discord IDs/Discriminator system
 			message += '($user)';
 
 		trace(message);
 		changePresence();
 	}
 
-	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void
+	private static function onError(errorCode:Int, message:ConstCharStar):Void
 	{
-		trace('Discord: Error ($errorCode: ${cast(message, String)})');
+		trace('Discord: Error ($errorCode: ${cast (message, String)})');
 	}
 
-	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void
+	private static function onDisconnected(errorCode:Int, message:ConstCharStar):Void
 	{
-		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
+		trace('Discord: Disconnected ($errorCode: ${cast (message, String)})');
 	}
 
 	public static function initialize()
 	{
 		var discordHandlers:DiscordEventHandlers = new DiscordEventHandlers();
-		discordHandlers.ready = cpp.Function.fromStaticFunction(onReady);
-		discordHandlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
-		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
-		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), true, null);
+		discordHandlers.ready = onReady.fromStaticFunction();
+		discordHandlers.disconnected = onDisconnected.fromStaticFunction();
+		discordHandlers.errored = onError.fromStaticFunction();
+		Discord.Initialize(clientID, discordHandlers.addressOf(), true, null);
 
-		if(!isInitialized) trace("Discord Client initialized");
+		if (!isInitialized)
+			trace("Discord Client initialized");
 
 		if (__thread == null)
 		{
@@ -98,11 +106,14 @@ class DiscordClient
 		isInitialized = true;
 	}
 
-	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float, largeImageKey:String = 'icon')
+	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float,
+			largeImageKey:String = 'icon')
 	{
 		var startTimestamp:Float = 0;
-		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
-		if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
+		if (hasStartTimestamp)
+			startTimestamp = Date.now().getTime();
+		if (endTimestamp > 0)
+			endTimestamp = startTimestamp + endTimestamp;
 
 		presence.state = state;
 		presence.details = details;
@@ -114,14 +125,14 @@ class DiscordClient
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
 
-		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp, $largeImageKey');
+		// trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp, $largeImageKey');
 	}
 
-	public static function updatePresence()
+	public inline static function updatePresence()
 	{
-		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence.__presence));
+		Discord.UpdatePresence(RawConstPointer.addressOf(presence.__presence));
 	}
-	
+
 	inline public static function resetClientID()
 	{
 		clientID = _defaultID;
@@ -132,7 +143,7 @@ class DiscordClient
 		var change:Bool = (clientID != newID);
 		clientID = newID;
 
-		if(change && isInitialized)
+		if (change && isInitialized)
 		{
 			shutdown();
 			initialize();
@@ -145,10 +156,10 @@ class DiscordClient
 	public static function loadModRPC()
 	{
 		var pack:Dynamic = Mods.getPack();
-		if(pack != null && pack.discordRPC != null && pack.discordRPC != clientID)
+		if (pack != null && pack.discordRPC != null && pack.discordRPC != clientID)
 		{
 			clientID = pack.discordRPC;
-			//trace('Changing clientID! $clientID, $_defaultID');
+			// trace('Changing clientID! $clientID, $_defaultID');
 		}
 	}
 	#end
@@ -157,8 +168,10 @@ class DiscordClient
 	public static function addLuaCallbacks(lua:State)
 	{
 		Lua_helper.add_callback(lua, "changeDiscordPresence", changePresence);
-		Lua_helper.add_callback(lua, "changeDiscordClientID", function(?newID:String) {
-			if(newID == null) newID = _defaultID;
+		Lua_helper.add_callback(lua, "changeDiscordClientID", function(?newID:String)
+		{
+			if (newID == null)
+				newID = _defaultID;
 			clientID = newID;
 		});
 	}
@@ -230,7 +243,7 @@ private final class DiscordPresence
 	{
 		return __presence.largeImageKey;
 	}
-	
+
 	@:noCompletion inline function set_largeImageKey(value:String):String
 	{
 		return __presence.largeImageKey = value;
