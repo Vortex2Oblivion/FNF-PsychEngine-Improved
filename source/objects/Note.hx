@@ -289,7 +289,7 @@ class Note extends FlxSprite
 
 			animation.play(colArray[noteData % colArray.length] + 'holdend');
 
-			scale.y = 0.7;				
+			scale.y = PlayState.isPixelStage ? 1 : 0.7;				
 			updateHitbox();
 			centerOffsets();
 
@@ -444,7 +444,7 @@ class Note extends FlxSprite
 		}
 		else animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
 
-		setGraphicSize(Std.int(width * 0.7));
+		scale.set(0.7, 0.7);
 		updateHitbox();
 	}
 
@@ -543,7 +543,7 @@ class Note extends FlxSprite
 	public function clipToStrumNote(myStrum:StrumNote)
 	{
 		var center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
-		if((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit)))
+		if(mustPress || !ignoreNote)
 		{
 			var swagRect:FlxRect = clipRect;
 			if(swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);

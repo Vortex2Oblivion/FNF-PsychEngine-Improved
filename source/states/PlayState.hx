@@ -1411,16 +1411,14 @@ class PlayState extends MusicBeatState
 								oldNote.scale.y /= playbackRate;
 								oldNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
 							}
-							
+
 							if(ClientPrefs.data.downScroll)
 								sustainNote.correctionOffset = 0;
-			
 						}
 						else if(oldNote.isSustainNote)
 						{
 							oldNote.scale.y /= playbackRate;
 							oldNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
-	
 						}
 
 						if (sustainNote.mustPress) sustainNote.x += FlxG.width / 2; // general offset
