@@ -76,6 +76,8 @@ class TitleState extends MusicBeatState
 			Language.reloadPhrases();
 		}
 
+		FlxSprite.defaultAntialiasing = ClientPrefs.data.antialiasing;
+
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		if(!initialized)
