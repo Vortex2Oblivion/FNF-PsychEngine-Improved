@@ -289,7 +289,7 @@ class Note extends FlxSprite
 
 			animation.play(colArray[noteData % colArray.length] + 'holdend');
 
-			scale.y = PlayState.isPixelStage ? 1 : 0.7;				
+			scale.y = 0.7;				
 			updateHitbox();
 			centerOffsets();
 
@@ -302,7 +302,7 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
 
-				prevNote.scale.y = Conductor.stepCrochet / 100 * 1.05;
+				prevNote.scale.y = Conductor.stepCrochet / 100 * 1.0285;
 				if(createdFrom != null && createdFrom.songSpeed != null) prevNote.scale.y *= createdFrom.songSpeed;
 
 				if(PlayState.isPixelStage) {
