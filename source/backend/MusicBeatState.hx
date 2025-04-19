@@ -78,6 +78,11 @@ class MusicBeatState extends FlxState
 		if(FlxG.keys.justPressed.F11){
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
+
+		if(FlxG.keys.justPressed.F5){
+			FlxG.resetState();
+		}
+
 		if(FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 		
 		stagesFunc(function(stage:BaseStage) {

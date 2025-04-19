@@ -1757,12 +1757,17 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		var columnCount:Int = (GRID_COLUMNS_PER_PLAYER * GRID_PLAYERS) + (SHOW_EVENT_COLUMN ? 1 : 0);
 		gridBg = new ChartingGridSprite(columnCount, gridColors[0], gridColors[1]);
 		gridBg.screenCenter(X);
+		gridBg.antialiasing = false;
 
 		prevGridBg = new ChartingGridSprite(columnCount, gridColorsOther[0], gridColorsOther[1]);
 		nextGridBg = new ChartingGridSprite(columnCount, gridColorsOther[0], gridColorsOther[1]);
 		prevGridBg.x = nextGridBg.x = gridBg.x;
 		prevGridBg.stripes = nextGridBg.stripes = gridBg.stripes = stripes;
+		prevGridBg.antialiasing = false;
 		
+		nextGridBg.antialiasing = false;
+
+
 		if(destroyed)
 		{
 			insert(getFirstNull(), prevGridBg);

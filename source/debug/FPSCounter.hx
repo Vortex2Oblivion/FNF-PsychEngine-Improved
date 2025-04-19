@@ -1,5 +1,6 @@
 package debug;
 
+import lime.system.System;
 import flixel.FlxG;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -47,23 +48,25 @@ class FPSCounter extends TextField
 		times = [];
 	}
 
-	var deltaTimeout:Float = 0.0;
+	private var _framesPassed:Int = 0;
+    private var _previousTime:Float = 0;
+    private var _updateClock:Float = 999999;
 
 	// Event Handlers
+	// I stole this shit from https://github.com/swordcube/friday-again-garfie-baby/blob/main/source/funkin/backend/StatsDisplay.hx lol
 	private override function __enterFrame(deltaTime:Float):Void
 	{
-		final now:Float = haxe.Timer.stamp() * 1000;
-		times.push(now);
-		while (times[0] < now - 1000) times.shift();
-		// prevents the overlay from updating every frame, why would you need to anyways @crowplexus
-		if (deltaTimeout < 50) {
-			deltaTimeout += deltaTime;
-			return;
-		}
-
-		currentFPS = times.length < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
+		_framesPassed++;
+        final deltaTime:Float = System.getTimerPrecise() - _previousTime;
+        _updateClock += deltaTime;
+        
+        if(_updateClock >= 1000) {
+            currentFPS = _framesPassed;
+            _framesPassed = 0;
+            _updateClock = 0;
+        }
+        _previousTime = System.getTimerPrecise();
 		updateText();
-		deltaTimeout = 0.0;
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript

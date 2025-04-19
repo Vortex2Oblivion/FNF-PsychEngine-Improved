@@ -189,13 +189,10 @@ class ClientPrefs {
 		}
 		#end
 
-		if(data.framerate > FlxG.drawFramerate)
-		{
+		if(data.framerate > FlxG.drawFramerate || data.framerate == 0) {
 			FlxG.updateFramerate = data.framerate;
 			FlxG.drawFramerate = data.framerate;
-		}
-		else
-		{
+		} else {
 			FlxG.drawFramerate = data.framerate;
 			FlxG.updateFramerate = data.framerate;
 		}
