@@ -12,6 +12,8 @@ haxelib install flixel-tools 1.5.1
 haxelib install hscript-iris 1.1.3
 haxelib install tjson
 haxelib install hxdiscord_rpc
+haxelib install format
+haxelib install hxp
 haxelib git hxvlc https://github.com/vortex2oblivion/hxvlc --skip-dependencies
 haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 1906c4a96f6bb6df66562b3f24c62f4c5bba14a7
