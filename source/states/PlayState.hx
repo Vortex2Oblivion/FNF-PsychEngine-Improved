@@ -445,6 +445,8 @@ class PlayState extends MusicBeatState
 				#end
 			}
 		#end
+
+		new FunkinPython();
 			
 		var camPos:FlxPoint = FlxPoint.get(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
 		if(gf != null)
