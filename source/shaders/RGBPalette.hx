@@ -162,7 +162,7 @@ class RGBPaletteShader extends FlxShader {
 		#pragma header
 
 		void main() {
-			gl_FragColor = flixel_texture2DCustom(bitmap, openfl_TextureCoordv);
+			ofl_FragColor = flixel_texture2DCustom(bitmap, openfl_TextureCoordv);
 		}')
 
 	public function new()

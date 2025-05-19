@@ -351,7 +351,7 @@ class RainShader extends FlxShader
 				// vec3 fog = light * (0.5 + rainSum * 0.5);
 				// color = color / (1.0 + fog) + fog;
 
-				gl_FragColor = vec4(color, 1);
+				ofl_FragColor = vec4(color, 1);
 			}
 		")
 
