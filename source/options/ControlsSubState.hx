@@ -16,33 +16,7 @@ class ControlsSubState extends MusicBeatSubstate
 	var curAlt:Bool = false;
 
 	//Show on gamepad - Display name - Save file key - Rebind display name
-	var options:Array<Dynamic> = [
-		[true, 'NOTES'],
-		[true, 'Left', 'note_left', 'Note Left'],
-		[true, 'Down', 'note_down', 'Note Down'],
-		[true, 'Up', 'note_up', 'Note Up'],
-		[true, 'Right', 'note_right', 'Note Right'],
-		[true],
-		[true, 'UI'],
-		[true, 'Left', 'ui_left', 'UI Left'],
-		[true, 'Down', 'ui_down', 'UI Down'],
-		[true, 'Up', 'ui_up', 'UI Up'],
-		[true, 'Right', 'ui_right', 'UI Right'],
-		[true],
-		[true, 'Reset', 'reset', 'Reset'],
-		[true, 'Accept', 'accept', 'Accept'],
-		[true, 'Back', 'back', 'Back'],
-		[true, 'Pause', 'pause', 'Pause'],
-		[false],
-		[false, 'VOLUME'],
-		[false, 'Mute', 'volume_mute', 'Volume Mute'],
-		[false, 'Up', 'volume_up', 'Volume Up'],
-		[false, 'Down', 'volume_down', 'Volume Down'],
-		[false],
-		[false, 'DEBUG'],
-		[false, 'Key 1', 'debug_1', 'Debug Key #1'],
-		[false, 'Key 2', 'debug_2', 'Debug Key #2']
-	];
+	var options:Array<Dynamic> = [[true, 'NOTES']];
 	var curOptions:Array<Int>;
 	var curOptionsValid:Array<Int>;
 	static var defaultKey:String = 'Reset to Default Keys';
@@ -68,6 +42,41 @@ class ControlsSubState extends MusicBeatSubstate
 		DiscordClient.changePresence("Controls Menu", null);
 		#end
 
+var directions:Array<String> = ['Left', 'Down', 'Up', 'Right'];
+
+		for(i in 0...9){
+			options.push([false, (i+1) + " Key"]);
+			for(j in 0...i+1){
+				options.push([true, directions[j%4], '${i}_key_$j']);
+			}
+		}
+
+		var dumb:Array<Dynamic> = [
+			[true],
+			[true, 'UI'],
+			[true, 'Left', 'ui_left', 'UI Left'],
+			[true, 'Down', 'ui_down', 'UI Down'],
+			[true, 'Up', 'ui_up', 'UI Up'],
+			[true, 'Right', 'ui_right', 'UI Right'],
+			[true],
+			[true, 'Reset', 'reset', 'Reset'],
+			[true, 'Accept', 'accept', 'Accept'],
+			[true, 'Back', 'back', 'Back'],
+			[true, 'Pause', 'pause', 'Pause'],
+			[false],
+			[false, 'VOLUME'],
+			[false, 'Mute', 'volume_mute', 'Volume Mute'],
+			[false, 'Up', 'volume_up', 'Volume Up'],
+			[false, 'Down', 'volume_down', 'Volume Down'],
+			[false],
+			[false, 'DEBUG'],
+			[false, 'Key 1', 'debug_1', 'Debug Key #1'],
+			[false, 'Key 2', 'debug_2', 'Debug Key #2']
+		];
+
+		for (option in dumb) {
+			options.push(dumb);
+		}
 		options.push([true]);
 		options.push([true]);
 		options.push([true, defaultKey]);
@@ -176,20 +185,21 @@ class ControlsSubState extends MusicBeatSubstate
 		text.y -= 55;
 		text.startPosition.y -= 55;
 	}
-	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int)
-	{
+	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int) {
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
-		if(keys == null && onKeyboardMode)
+		if(ClientPrefs.defaultKeys.get(option[2]) == null){
+			return;
+		}
+		if (keys == null && onKeyboardMode)
 			keys = ClientPrefs.defaultKeys.get(option[2]).copy();
 
 		var gmpds:Array<Null<FlxGamepadInputID>> = ClientPrefs.gamepadBinds.get(option[2]);
-		if(gmpds == null && !onKeyboardMode)
+		if (gmpds == null && !onKeyboardMode)
 			gmpds = ClientPrefs.defaultButtons.get(option[2]).copy();
 
-		for (n in 0...2)
-		{
+		for (n in 0...2) {
 			var key:String = null;
-			if(onKeyboardMode)
+			if (onKeyboardMode)
 				key = InputFormatter.getKeyName((keys[n] != null) ? keys[n] : NONE);
 			else
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
@@ -206,7 +216,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 			playstationCheck(attach);
 			attach.scaleX = Math.min(1, 230 / attach.width);
-			//attach.text = key;
+			// attach.text = key;
 
 			// spawn black bars at the right of the key name
 			var black:AttachedSprite = new AttachedSprite();

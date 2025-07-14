@@ -148,8 +148,15 @@ class ClientPrefs {
 		while(gamepadBind != null && gamepadBind.contains(NONE)) gamepadBind.remove(NONE);
 	}
 
-	public static function loadDefaultKeys()
-	{
+
+	public static function loadDefaultKeys() {
+
+		var directions:Array<FlxKey> = [D, F, J, K];
+		for(i in 0...9){
+			for(j in 0...i+1){
+				keyBinds.set('${i}_key_$j', [directions[j%4]]);
+			}
+		}
 		defaultKeys = keyBinds.copy();
 		defaultButtons = gamepadBinds.copy();
 	}
