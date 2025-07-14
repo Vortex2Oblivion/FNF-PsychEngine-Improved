@@ -1,5 +1,6 @@
 package debug;
 
+import cpp.SizeT;
 import lime.system.System;
 import flixel.FlxG;
 import openfl.text.TextField;
@@ -57,11 +58,13 @@ class FPSCounter extends TextField
 	private override function __enterFrame(deltaTime:Float):Void
 	{
 		_framesPassed++;
-        final deltaTime:Float = System.getTimerPrecise() - _previousTime;
+
+        final deltaTime:Float = Math.max(System.getTimerPrecise() - _previousTime, 0);
         _updateClock += deltaTime;
         
         if(_updateClock >= 1000) {
-            currentFPS = _framesPassed;
+            currentFPS = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
+            
             _framesPassed = 0;
             _updateClock = 0;
         }
@@ -78,9 +81,9 @@ class FPSCounter extends TextField
 			textColor = 0xFFFF0000;
 	}
 
-	inline function get_memoryMegas():Float
+	inline function get_memoryMegas():SizeT
 		return Memory.getCurrentUsage();
 
-	inline function get_maxMemoryMegas():Float
+	inline function get_maxMemoryMegas():SizeT
 		return Memory.getPeakUsage();
 }
