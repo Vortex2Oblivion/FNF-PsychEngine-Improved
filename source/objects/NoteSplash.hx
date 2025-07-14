@@ -1,5 +1,6 @@
 package objects;
 
+import backend.ManiaData;
 import backend.animation.PsychAnimationController;
 import shaders.RGBPalette;
 import flixel.system.FlxAssets.FlxShader;
@@ -210,12 +211,12 @@ class NoteSplash extends FlxSprite
 			setPosition(babyArrow.x - Note.swagWidth * 0.95, babyArrow.y - Note.swagWidth); // To prevent it from being misplaced for one game tick
 
 		if (note != null)
-			noteData = note.noteData;
+			noteData = note.noteData % 4;
 
 		if (randomize && maxAnims > 1)
-			noteData = noteData % Note.colArray.length + (FlxG.random.int(0, maxAnims - 1) * Note.colArray.length);
+			noteData = noteData % 4 + (FlxG.random.int(0, maxAnims - 1) * 4);
 
-		this.noteData = noteData;
+		this.noteData = noteData % 4;
 		var anim:String = playDefaultAnim();
 
 		var tempShader:RGBPalette = null;
@@ -318,7 +319,7 @@ class NoteSplash extends FlxSprite
 	
 	public function playDefaultAnim()
 	{
-		var anim:String = noteDataMap.get(noteData);
+		var anim:String = noteDataMap.get(noteData % 4);
 		if (anim != null && animation.exists(anim))
 			animation.play(anim, true);
 
@@ -382,7 +383,7 @@ class NoteSplash extends FlxSprite
 	{
 		if (config == null) config = createConfig();
 
-		config.animations.set(name, {name: name, noteData: noteData, prefix: prefix, indices: indices, offsets: offsets, fps: fps});
+		config.animations.set(name, {name: name, noteData: noteData % 4, prefix: prefix, indices: indices, offsets: offsets, fps: fps});
 		config.scale = scale;
 		return config;
 	}
@@ -405,18 +406,18 @@ class NoteSplash extends FlxSprite
 				else
 					animation.addByPrefix(key, i.prefix, i.fps[1], false);
 
-				noteDataMap.set(i.noteData, key);
+				noteDataMap.set(i.noteData % 4, key);
 			}
 		}
 
-		scale.set(value.scale, value.scale);
+		scale.set(value.scale * (ManiaData.noteSizes[PlayState.SONG.mania] / 0.7), value.scale * (ManiaData.noteSizes[PlayState.SONG.mania] / 0.7));
 		return config = value;
 	}
 
 	function set_maxAnims(value:Int)
 	{
 		if (value > 0)
-			noteData = Std.int(FlxMath.wrap(noteData, 0, (value * Note.colArray.length) - 1));
+			noteData = Std.int(FlxMath.wrap(noteData % 4, 0, (value * 4) - 1));
 		else
 			noteData = 0;
 
