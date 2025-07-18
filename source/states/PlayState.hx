@@ -1449,6 +1449,10 @@ class PlayState extends MusicBeatState
 					gottaHitNote = !section.mustHitSection;
 				}
 
+				if(SONG.mania == 3){
+					gottaHitNote = (songNotes[1] < totalColumns);
+				}
+
 				if (i != 0)
 				{
 					// CLEAR ANY POSSIBLE GHOST NOTES

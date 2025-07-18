@@ -417,7 +417,7 @@ class NoteSplash extends FlxSprite
 	function set_maxAnims(value:Int)
 	{
 		if (value > 0)
-			noteData = Std.int(FlxMath.wrap(noteData % 4, 0, (value * 4) - 1));
+			noteData %= 4;
 		else
 			noteData = 0;
 
